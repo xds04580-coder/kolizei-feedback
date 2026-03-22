@@ -717,23 +717,6 @@
     }
   }
 
-  // Load existing reviews on page load
-  async function loadReviews() {
-    try {
-      const res = await fetch(API + '/api/reviews?limit=20');
-      if (!res.ok) return;
-      const rows = await res.json();
-      rows.forEach(r => db.push({
-        id: r.id, name: r.name, phone: r.phone,
-        pc: r.pc_rating, service: r.svc_rating,
-        comment: r.comment || '—',
-        time: r.created_at ? r.created_at.slice(0,16).replace('T',' ') : '—'
-      }));
-      renderDB();
-    } catch {}
-  }
-  loadReviews();
-
   function renderDB() {
     const body = document.getElementById('dbBody');
     document.getElementById('dbCount').textContent = db.length + ' ' + (db.length === 1 ? 'запись' : 'записей');
