@@ -1,10 +1,9 @@
-import os
-import asyncio
-import httpx
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
+from fastapi import FastAPI
+import os, asyncio, httpx
 from pydantic import BaseModel
 from typing import Optional
 import database as db
@@ -45,6 +44,15 @@ async def tg_send(text: str):
             }, timeout=8)
         except Exception:
             pass
+
+@app.middleware("http")
+async def no_cache_middleware(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
 
 # ── Startup ──────────────────────────────────────────────────────────────────
 
